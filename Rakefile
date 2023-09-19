@@ -1,4 +1,3 @@
-
 begin
   require 'bones'
 rescue LoadError
@@ -8,10 +7,10 @@ end
 ensure_in_path 'lib'
 require 'inifile'
 
-task :default => 'test:run'
+task default: 'test:run'
 task 'gem:release' => 'test:run'
 
-Bones {
+Bones do
   name         'inifile'
   summary      'INI file reader and writer'
   authors      'Tim Pease'
@@ -20,5 +19,5 @@ Bones {
   version      IniFile::VERSION
 
   use_gmail
-  depend_on    'bones-git', "~> 1.3", :development => true
-}
+  depend_on 'bones-git', '~> 1.3', development: true
+end
