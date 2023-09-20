@@ -579,20 +579,18 @@ class IniFile
     #
     # Returns the typecast value.
     def typecast(value)
-      case value
-      when /\Atrue\z/i then  true
-      when /\Afalse\z/i then false
-      when /\A\s*\z/i then   nil
+      if value.match?(/^true$/i)
+        true
+      elsif value.match?(/^false$/i)
+        false
+      elsif value.match?(/^\s*$/)
+        nil
+      elsif Integer(value, exception: false)
+        value.to_i
+      elsif Float(value, exception: false)
+        value.to_f
       else
-        begin
-          begin
-            Integer(value)
-          rescue StandardError
-            Float(value)
-          end
-        rescue StandardError
-          unescape_value(value)
-        end
+        unescape_value(value)
       end
     end
 
