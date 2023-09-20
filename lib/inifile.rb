@@ -603,15 +603,14 @@ class IniFile
     # Returns the unescaped value.
     def unescape_value(value)
       value = value.to_s
-      value.gsub!(/\\[0nrt\\]/) do |char|
-        case char
-        when '\0' then   "\0"
-        when '\n' then   "\n"
-        when '\r' then   "\r"
-        when '\t' then   "\t"
-        when '\\\\' then '\\'
-        end
-      end
+      special_chars = {
+        '\0' => "\0",
+        '\n' => "\n",
+        '\r' => "\r",
+        '\t' => "\t",
+        '\\\\' => '\\'
+      }
+      value.gsub!(/\\[0nrt\\]/, special_chars)
       value
     end
   end
