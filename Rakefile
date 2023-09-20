@@ -1,23 +1,11 @@
-begin
-  require 'bones'
-rescue LoadError
-  abort '### please install the "bones" gem ###'
-end
+# frozen_string_literal: true
 
-ensure_in_path 'lib'
-require 'inifile'
+require "rake/testtask"
 
-task default: 'test:run'
-task 'gem:release' => 'test:run'
+task default: 'test'
 
-Bones do
-  name         'inifile'
-  summary      'INI file reader and writer'
-  authors      'Tim Pease'
-  email        'tim.pease@gmail.com'
-  url          'http://rubygems.org/gems/inifile'
-  version      IniFile::VERSION
-
-  use_gmail
-  depend_on 'bones-git', '~> 1.3', development: true
+Rake::TestTask.new(:test) do |t|
+  t.libs << "test"
+  t.test_files = FileList['test/test*.rb']
+  t.verbose = true
 end
