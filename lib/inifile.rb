@@ -237,7 +237,7 @@ class IniFile
   #
   # Returns this IniFile.
   def each_section(&block)
-    return unless block_given?
+    return unless block
 
     @ini.each_key(&block)
     self
@@ -579,20 +579,18 @@ class IniFile
     #
     # Returns the typecast value.
     def typecast(value)
-      case value
-      when /\Atrue\z/i then  true
-      when /\Afalse\z/i then false
-      when /\A\s*\z/i then   nil
+      if value.match?(/^true$/i)
+        true
+      elsif value.match?(/^false$/i)
+        false
+      elsif value.match?(/^\s*$/)
+        nil
+      elsif Integer(value, exception: false)
+        value.to_i
+      elsif Float(value, exception: false)
+        value.to_f
       else
-        begin
-          begin
-            Integer(value)
-          rescue StandardError
-            Float(value)
-          end
-        rescue StandardError
-          unescape_value(value)
-        end
+        unescape_value(value)
       end
     end
 
@@ -605,15 +603,14 @@ class IniFile
     # Returns the unescaped value.
     def unescape_value(value)
       value = value.to_s
-      value.gsub!(/\\[0nrt\\]/) do |char|
-        case char
-        when '\0' then   "\0"
-        when '\n' then   "\n"
-        when '\r' then   "\r"
-        when '\t' then   "\t"
-        when '\\\\' then '\\'
-        end
-      end
+      special_chars = {
+        '\0' => "\0",
+        '\n' => "\n",
+        '\r' => "\r",
+        '\t' => "\t",
+        '\\\\' => '\\'
+      }
+      value.gsub!(/\\[0nrt\\]/, special_chars)
       value
     end
   end
