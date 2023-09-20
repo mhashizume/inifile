@@ -237,7 +237,7 @@ class IniFile
   #
   # Returns this IniFile.
   def each_section(&block)
-    return unless block_given?
+    return unless block
 
     @ini.each_key(&block)
     self
